@@ -1,7 +1,8 @@
 package com.epoint.domain;
 
-import java.time.LocalDate;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.Date;
 
 /**
  * <p>
@@ -29,7 +30,7 @@ public class ProductInfo implements Serializable {
 
     private Integer pricecount;
 
-    private LocalDate releasetime;
+    private Date releasetime;
 
     private String notes;
 
@@ -90,11 +91,11 @@ public class ProductInfo implements Serializable {
         this.pricecount = pricecount;
     }
 
-    public LocalDate getReleasetime() {
+    public Date getReleasetime() {
         return releasetime;
     }
 
-    public void setReleasetime(LocalDate releasetime) {
+    public void setReleasetime(Date releasetime) {
         this.releasetime = releasetime;
     }
 

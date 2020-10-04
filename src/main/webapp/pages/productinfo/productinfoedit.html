@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="../../scripts/boot.js" type="text/javascript"></script>
+<style type="text/css">
+html, body {
+	padding: 0;
+	margin: 0;
+	border: 0;
+	height: 100%;
+	overflow: hidden;
+}
+</style>
+
+</head>
+<body>
+	<form id="form1" method="post">
+		<fieldset style="border: solid 1px #aaa; padding: 3px;">
+			<legend>新增</legend>
+			<div style="padding: 5px;"></div>
+			<table>
+				<tr>
+					<td style="width: 80px;">产品编号:</td>
+					<td style="width: 150px;"><input name="pdtid" id="pdtid"
+						allowInput="false" class="mini-textbox" /></td>
+					<td style="width: 80px;">产品名称:</td>
+					<td style="width: 150px;"><input name="pdtname"
+						allowInput="false" class="mini-textbox" /></td>
+				</tr>
+				<tr>
+					<td style="width: 80px;">生产国家:</td>
+					<td style="width: 150px;"><select name="country" id="country"
+						onValuechanged="changeCountry" class="mini-radiobuttonlist">
+							<option value="1">中国</option>
+							<option value="2">美国</option>
+							<option value="3">日本</option>
+							<option value="4">德国</option>
+					</select></td>
+					<td style="width: 80px;">产品语言:</td>
+					<td style="width: 150px;"><input name="pdtlanguage"
+						allowInput="false" id="pdtlanguage" class="mini-textbox" /></td>
+				</tr>
+				<tr>
+					<td style="width: 80px;">产品用途:</td>
+					<td style="width: 150px;"><input name="pdtusage"
+						required="true" onenter="onKeyEnter" emptyText="请选择"
+						name="pdtusage" class="mini-combobox" url="/data/usage.txt"
+						valueField="id" textField="text" onenter="onKeyEnter" /></td>
+					<td style="width: 80px;">最新报价:</td>
+					<td style="width: 150px;"><input name="latestprice"
+						allowInput="false" class="mini-textbox" /></td>
+				</tr>
+				<tr>
+					<td style="width: 80px;">上市时间</td>
+					<td style="width: 150px;"><input id="date1" name="releasetime"
+						allowInput="false"  class="mini-textbox"
+						ondrawdate="onDrawDate" /></td>
+					<td style="width: 80px;">报价次数:</td>
+					<td style="width: 150px;"><input name="pricecount"
+						allowInput="false" class="mini-textbox" /></td>
+				</tr>
+				<tr>
+					<td style="width: 80px;">备注</td>
+					<td style="width: 150px;"><input name="notes"
+						class="mini-textarea" /></td>
+				</tr>
+			</table>
+		</fieldset>
+		<div style="text-align: center; padding: 10px;">
+			<a class="mini-button" onclick="onOk"
+				style="width: 60px; margin-right: 20px;">确定</a> <a
+				class="mini-button" onclick="onCancel" style="width: 60px;">取消</a>
+		</div>
+	</form>
+	<script type="text/javascript">
+		mini.parse();
+		var form = new mini.Form("form1");
+
+		setData();
+		function setData() {
+			var str = location.search.substr(1);
+			console.log(str)
+			var pdtid = str.split("&")[0].substr(3);
+			$.ajax({
+				url : "/productlist?method=getone&id=" + pdtid,
+				cache : false,
+				success : function(data) {
+					var o = mini.decode(data);
+					form.setData(o);
+				}
+			});
+		}
+
+		function SaveData() {
+			var o = form.getData();
+			form.validate();
+			if (form.isValid() == false)
+				return;
+			var json = mini.encode(o);
+			$.ajax({
+				url : "/productlist?method=update",
+				type : 'post',
+				data : {
+					data : json
+				},
+				cache : false,
+				success : function(text) {
+					mini.confirm(text, "提示", function() {
+						CloseWindow("save");
+					});
+				}
+			});
+		}
+
+		function CloseWindow(action) {
+			if (window.CloseOwnerWindow)
+				return window.CloseOwnerWindow(action);
+			else
+				window.close();
+		}
+
+		function onOk(e) {
+			SaveData();
+		}
+
+		function onCancel(e) {
+			CloseWindow("cancel");
+		}
+	</script>
+</body>
+</html>

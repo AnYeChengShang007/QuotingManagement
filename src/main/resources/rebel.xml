@@ -8,6 +8,11 @@
 
 	<web>
 		<link target="/">
+			<dir name="G:/Users/Administrator/e2018new/quotingmanagement/target/m2e-wtp/web-resources">
+				<exclude name="/"/>
+			</dir>
+		</link>
+		<link target="/">
 			<dir name="G:/Users/Administrator/e2018new/quotingmanagement/src/main/webapp">
 			</dir>
 		</link>

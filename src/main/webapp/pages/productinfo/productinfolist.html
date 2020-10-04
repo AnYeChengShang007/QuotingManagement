@@ -13,7 +13,6 @@ html, body {
 	height: 100%;
 	overflow: hidden;
 }
-
 </style>
 </head>
 <body>
@@ -21,11 +20,13 @@ html, body {
 		<table style="width: 100%;">
 			<tr>
 				<td style="width: 100%;"><a class="mini-button" onclick="add"
-					iconCls="icon-save" plain="true">xx</a></td>
-				<td style="white-space: nowrap;"><input emptyText="xxx"
-					id="xx" class="mini-textbox" /> <input name="xxx"
-					onenter="onKeyEnter" emptyText="xxx id="xxx"
-					class="mini-combobox" url="../../data/category.txt" valueField="id"
+					iconCls="icon-add" plain="true">新增产品信息</a><a class="mini-button"
+					onclick="add" iconCls="icon-add" plain="true">删除选中</a></td>
+				<td style="white-space: nowrap;">产品名称：<input name="name"
+					onenter="onKeyEnter" emptyText="请输入产品名称" id="name"
+					class="mini-textbox" onenter="onKeyEnter" /> 用途：<input
+					name="usage" onenter="onKeyEnter" emptyText="请选择" id="usage"
+					class="mini-combobox" url="/data/usage.txt" valueField="id"
 					textField="text" onenter="onKeyEnter" /> <a class="mini-button"
 					iconCls="icon-search" plain="true" onclick="onSearch()">查询</a></td>
 			</tr>
@@ -33,13 +34,24 @@ html, body {
 	</div>
 	<div class="mini-fit">
 
-		<div id="datagrid1" class="mini-datagrid"
-			style="width: 100%; height: 100%;" url="/xxxx"
+		<div id="datagrid1" class="mini-datagrid" multiSelect="true"
+			style="width: 100%; height: 100%;" url="/productlist"
 			sizeList="[5,10,20]" pageSize="10">
 			<div property="columns">
-				<div type="indexcolumn"></div>
-				<div field="xxx" width="100%" headerAlign="center" align="center"
-					allowSort="true">xxx</div>
+				<div type="checkcolumn"></div>
+				<div field="pdtid" width="100%" headerAlign="center" align="center">产品编号</div>
+				<div field="pdtname" width="100%" headerAlign="center"
+					align="center">产品名称</div>
+				<div field="country" width="100%" headerAlign="center"
+					renderer="onCountryRenderer" align="center">生产国家</div>
+				<div field="pdtlanguage" width="100%" headerAlign="center"
+					align="center">产品语言</div>
+				<div field="pdtusage" width="100%" headerAlign="center"
+					renderer="onUsageRenderer" align="center">产品用途</div>
+				<div field="latestprice" width="100%" headerAlign="center"
+					align="center">最新报价</div>
+				<div field="pricecount" width="100%" headerAlign="center"
+					align="center">报价次数</div>
 				<div width="100%" headerAlign="center" align="center"
 					renderer="onActionRenderer">操作按钮</div>
 			</div>
@@ -50,12 +62,43 @@ html, body {
 		mini.parse();
 		var grid = mini.get("datagrid1");
 		grid.load();
+		
+		function onCountryRenderer(e) {
+			var text = "";
+			$.ajax({
+				url : "/data/country.txt",
+				type : "get",
+				async : false,
+				success : function(data) {
 
-		function onNumberRenderer(e) {
-			if (e.value < 10) {
-				e.cellCls = "xx";
-			}
-			return e.value;
+					var country = mini.decode(data);
+					for ( var i in country) {
+						if (e.value == country[i].id) {
+							text = country[i].text;
+						}
+					}
+				}
+			});
+			return text;
+		}
+
+		function onUsageRenderer(e) {
+			var text = "";
+			$.ajax({
+				url : "/data/usage.txt",
+				type : "get",
+				async : false,
+				success : function(data) {
+
+					var usage = mini.decode(data);
+					for ( var i in usage) {
+						if (e.value == usage[i].id) {
+							text = usage[i].text;
+						}
+					}
+				}
+			});
+			return text;
 		}
 		function onActionRenderer(e) {
 			var grid = e.sender;
@@ -63,16 +106,36 @@ html, body {
 			var uid = record._uid;
 			var rowIndex = e.rowIndex;
 
-			var s = '<a class="mini-button" href="javascript:editRow(\'' + uid
+			var s = '<a class="mini-button" href="javascript:delRow(\'' + uid
+					+ '\')">删除</a> '
+					+'<a class="mini-button" href="javascript:editRow(\'' + uid
 					+ '\')">修改</a> ';
 			return s;
 		}
+
+		function delRow(uid) {
+			var pdtId = grid.getRowByUid(uid).pdtid;
+			mini.confirm("确定删除吗", "提示", function(e) {
+				if (e == 'ok') {
+					$.ajax({
+						url : "/productlist?method=del&id=" + pdtId,
+						type : "get",
+						success : function(data) {
+							mini.confirm(data, "提示",function(){
+								grid.reload();
+							});
+						}
+					});
+				}
+			})
+		}
+
 		function onSearch() {
-			var xxx = mini.get("xxx").value;
-			var xxxx = mini.get("xxx").value;
+			var name = mini.get("name").value;
+			var usage = mini.get("usage").value;
 			grid.load({
-				xxx : xxx,
-				xxxx : xxxx
+				name : name,
+				usage : usage
 			});
 		}
 		function onKeyEnter(e) {
@@ -80,10 +143,10 @@ html, body {
 		}
 		function add() {
 			mini.open({
-				url : "xxx",
-				title : "xxx",
+				url : "/pages/productinfo/productinfoadd.html",
+				title : "新增",
 				width : 600,
-				height : 400,
+				height : 480,
 				allowResize : false,
 				onload : function() {
 				},
@@ -93,13 +156,14 @@ html, body {
 			});
 		}
 
-		function showDetail(uid) {
-			var xxx = grid.getRowByUid(uid).xxx;
+		
+		function editRow(uid) {
+			var pdtId = grid.getRowByUid(uid).pdtid;
 			mini.open({
-				url : "xxx" + xxx,
-				title : "xxx",
+				url : "/pages/productinfo/productinfoedit.html?id=" + pdtId,
+				title : "修改",
 				width : 600,
-				height : 200,
+				height : 480,
 				allowResize : false,
 				onload : function() {
 				},
