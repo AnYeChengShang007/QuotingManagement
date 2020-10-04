@@ -1,0 +1,5 @@
+[
+	{ id: "management", text: "报价管理系统", iconCls: "icon-add"},
+	{ id: "product", pid: "management", text: "产品信息管理", iconCls: "icon-add", url: "/pages/productinfo/productinfolist.html" },
+	{ id: "price", pid: "management", text: "产品报价信息管理", iconCls: "icon-edit", url: "/pages/priceinfo/priceinfolist.html" },
+]

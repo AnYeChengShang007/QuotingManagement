@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>xxxx</title>
+<script src="../../scripts/boot.js" type="text/javascript"></script>
+<style type="text/css">
+html, body {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+
+</style>
+</head>
+<body>
+	<div class="mini-toolbar" style="padding: 2px; border-bottom: 0;">
+		<table style="width: 100%;">
+			<tr>
+				<td style="width: 100%;"><a class="mini-button" onclick="add"
+					iconCls="icon-save" plain="true">xx</a></td>
+				<td style="white-space: nowrap;"><input emptyText="xxx"
+					id="xx" class="mini-textbox" /> <input name="xxx"
+					onenter="onKeyEnter" emptyText="xxx id="xxx"
+					class="mini-combobox" url="../../data/category.txt" valueField="id"
+					textField="text" onenter="onKeyEnter" /> <a class="mini-button"
+					iconCls="icon-search" plain="true" onclick="onSearch()">查询</a></td>
+			</tr>
+		</table>
+	</div>
+	<div class="mini-fit">
+
+		<div id="datagrid1" class="mini-datagrid"
+			style="width: 100%; height: 100%;" url="/xxxx"
+			sizeList="[5,10,20]" pageSize="10">
+			<div property="columns">
+				<div type="indexcolumn"></div>
+				<div field="xxx" width="100%" headerAlign="center" align="center"
+					allowSort="true">xxx</div>
+				<div width="100%" headerAlign="center" align="center"
+					renderer="onActionRenderer">操作按钮</div>
+			</div>
+		</div>
+
+	</div>
+	<script type="text/javascript">
+		mini.parse();
+		var grid = mini.get("datagrid1");
+		grid.load();
+
+		function onNumberRenderer(e) {
+			if (e.value < 10) {
+				e.cellCls = "xx";
+			}
+			return e.value;
+		}
+		function onActionRenderer(e) {
+			var grid = e.sender;
+			var record = e.record;
+			var uid = record._uid;
+			var rowIndex = e.rowIndex;
+
+			var s = '<a class="mini-button" href="javascript:editRow(\'' + uid
+					+ '\')">修改</a> ';
+			return s;
+		}
+		function onSearch() {
+			var xxx = mini.get("xxx").value;
+			var xxxx = mini.get("xxx").value;
+			grid.load({
+				xxx : xxx,
+				xxxx : xxxx
+			});
+		}
+		function onKeyEnter(e) {
+			onSearch();
+		}
+		function add() {
+			mini.open({
+				url : "xxx",
+				title : "xxx",
+				width : 600,
+				height : 400,
+				allowResize : false,
+				onload : function() {
+				},
+				ondestroy : function(action) {
+					grid.reload();
+				}
+			});
+		}
+
+		function showDetail(uid) {
+			var xxx = grid.getRowByUid(uid).xxx;
+			mini.open({
+				url : "xxx" + xxx,
+				title : "xxx",
+				width : 600,
+				height : 200,
+				allowResize : false,
+				onload : function() {
+				},
+				ondestroy : function(action) {
+					grid.reload();
+				}
+			});
+		}
+
+		function CloseWindow(action) {
+			if (window.CloseOwnerWindow)
+				return window.CloseOwnerWindow(action);
+			else
+				window.close();
+		}
+	</script>
+</body>
+</html>
